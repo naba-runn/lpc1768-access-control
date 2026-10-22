@@ -59,7 +59,7 @@
 
 /* Set to 1 to only show the code of each key pressed (to check the keypad
    before running the project). Set back to 0 for the real program.        */
-#define KEY_TEST_MODE    0
+#define KEY_TEST_MODE    1
 
 /* ----------------------------- key codes --------------------------------- */
 #define KEY_ENTER   0x0A
@@ -192,10 +192,11 @@ static void lcd_nibble(unsigned char nib, unsigned char rs)
         LPC_GPIO0->FIOSET = LCD_RS;
     else
         LPC_GPIO0->FIOCLR = LCD_RS;
+		delay_loop(500);
     LPC_GPIO0->FIOSET = LCD_EN;
-    delay_loop(50);
+    delay_loop(1000);
     LPC_GPIO0->FIOCLR = LCD_EN;
-    delay_loop(3000);
+    delay_loop(30000);
 }
 
 static void lcd_byte(unsigned char b, unsigned char rs)
@@ -213,7 +214,7 @@ static void lcd_cmd(unsigned char c)
 
 static void lcd_init(void)
 {
-    delay_ms(20);
+    delay_ms(50);
     lcd_nibble(0x3, 0); delay_ms(5);
     lcd_nibble(0x3, 0); delay_ms(1);
     lcd_nibble(0x3, 0); delay_ms(1);
@@ -653,6 +654,7 @@ int main(void)
     SystemInit();
     SystemCoreClockUpdate();
     gpio_init();
+		 leds(0xFF); delay_loop(2000000); leds(0x00);
     timer0_init();
     lcd_init();
     leds(0x00);
@@ -665,7 +667,7 @@ int main(void)
 
     while (1) {
         lcd_show("ENTER ID (0-3)", "C: CHANGE PIN");
-        k = get_key(0);                 /* home screen waits forever      */
+        k = get_key(0);                  /*home screen waits forever*/      
 
         if (k < NUM_IDS)
             login(k);
@@ -675,3 +677,14 @@ int main(void)
             message("INVALID ID", "USE 0 TO 3", 1500);
     }
 }
+
+/*int main(void)
+{
+    SystemInit();
+    SystemCoreClockUpdate();
+    gpio_init();
+    timer0_init();
+    lcd_init();
+    lcd_show("HELLO", "LCD WORKS");
+    while (1) ;
+}*/
